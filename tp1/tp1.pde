@@ -1,8 +1,6 @@
 PImage img;
 
 void setup() {
-  img = loadImage("besoreferencia.jpg");
-
   size(800, 400);
   background(#B4852C);
   img = loadImage("beso.jpg");
