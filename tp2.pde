@@ -1,32 +1,37 @@
-float posx = 0;
+//Sofia Giordano
+//tp2 com5
+//Legajo 119042/3
+float posx = 0; 
 float posy = 0;
+float posyNeg= 180;
+float posxNeg = 600;
 int move = 0;
 int diapo = 1;
-int framesPerDiapo = 300; // 5 seg
 boolean reinicio = false;
-PImage diapo1, diapo2, diapo3, diapo4, diapo5, diapo6, diapo7, diapo8, diapo9, intro, viaje, prota, pers1, pers2, pers3, fiesta, reina, juicio, regreso;
+int startTime;
+int duracion = 0;
+
+PImage diapo1, diapo2, diapo3, diapo4, diapo5, diapo6, diapo7, diapo8, intro, viaje, prota, fiesta, reina, juicio, regreso;
 PFont fuenteTitulo;
 PFont fuenteTexto;
-int fadeAlpha = 0; // Para el fade-in
+int fadeAlpha = 0;
 
 void setup() {
   size(640, 480);
+  noStroke();
+
   diapo1 = loadImage("inicio.jpg");
   diapo2 = loadImage("fondo1.jpg");
   diapo3 = loadImage("fondo2.jpg");
   diapo4 = loadImage("fondo3.jpg");
-  diapo5 = loadImage("fondo4.jpg");
-  diapo6 = loadImage("fondo5.jpg");
-  diapo7 = loadImage("fondo6.jpg");
-  diapo8 = loadImage("fondo7.jpg");
-  diapo9 = loadImage("fondo8.jpg");
-  
+  diapo5 = loadImage("fondo5.jpg");
+  diapo6 = loadImage("fondo6.jpg");
+  diapo7 = loadImage("fondo7.jpg");
+  diapo8 = loadImage("fondo8.jpg");
+
   intro = loadImage("intro.jpg");
   viaje = loadImage("principio.jpg");
   prota = loadImage("alicia.jpg");
-  pers1 = loadImage("gato-sonriente.jpg");
-  pers2 = loadImage("oruga.jpg");
-  pers3 = loadImage("sombrerero.jpg");
   fiesta = loadImage("fiesta-del-te.jpg");
   reina = loadImage("reina-roja.jpg");
   juicio = loadImage("juicio.jpg");
@@ -37,13 +42,28 @@ void setup() {
 }
 
 void draw() {
-  
-  if ((frameCount % framesPerDiapo == 0) && (diapo < 9)) {
+  if (diapo == 1) {
+    duracion = 5000; // 5 segundos
+  } else if ((diapo == 5) || (diapo == 6)){
+    duracion = 8000; // 8 segundos
+  }
+  else {
+    duracion = 14000; // 14 segundos
+  }
+
+  if ((millis() - startTime >= duracion) && (diapo < 8)) {
     diapo = diapo + 1;
-    fadeAlpha = 0; // reiniciar fade cuando cambia
-  } else if ((diapo == 9) && (reinicio == true)) {
+    posx = 0;
+    posy = 0;
+    posxNeg = 600;
+    posyNeg = 180;
+    fadeAlpha = 0;
+    startTime = millis(); // Reiniciar temporizador
+  } else if ((diapo == 8) && (reinicio == true)) {
     diapo = 1;
+    fadeAlpha = 0;
     reinicio = false;
+    startTime = millis(); 
   }
 
   if (diapo == 1) {
@@ -62,8 +82,6 @@ void draw() {
     diapo7();
   } else if (diapo == 8) {
     diapo8();
-  } else if (diapo == 9) {
-    diapo9();
   }
   println(diapo);
 }
@@ -72,48 +90,36 @@ void draw() {
 
 void diapo1() {
   image(diapo1, 0, 0, 640, 480);
-  
-  posx = 80;
-  posy = 100;
-  if (fadeAlpha < 255) {
-    fadeAlpha += 3; // velocidad del fade
-  }
-  fill(255, fadeAlpha); // texto con opacidad
-  
+  if (fadeAlpha < 255) fadeAlpha += 4;
+  fill(255, fadeAlpha);
   textFont(fuenteTitulo);
-  text("Alicia en el País de las Maravillas", posx, posy);
-  text("\nAutor: Lewis Carroll \nPublicado en 1865", posx, posy);
+  text("Alicia en el País de las Maravillas", 80, 100);
+  text("\nAutor: Lewis Carroll \nPublicado en 1865", 80, 100);
 }
+
 void diapo2() {
   image(diapo2, 0, 0, 640, 480);
   image(intro, 60, 100, 200, 280);
 
-  posx = 300;
-  posy = 90;
-  if (fadeAlpha < 255) {
-    fadeAlpha += 3; // velocidad del fade
-  }
+  if (fadeAlpha < 255) fadeAlpha += 5;
+  if (posy < 110) posy+=2;
 
-  fill(255, fadeAlpha); // texto con opacidad
-  
-  fill(#EAAAAA); rect(290, 60, 300, 320, 20);
-  noStroke();
-  fill(255);
+  fill(#EAAAAA);
+  rect(290, 70, 300, 340, 20);
+  fill(255, fadeAlpha);
   textFont(fuenteTitulo);
-  text("Introducción", posx, posy);
+  text("Introducción", 300, posy);
   textFont(fuenteTexto);
-  text("La historia comienza cuando \nAlicia, ve pasar a un Conejo \nBlanco que parece tener mucha \nprisa. Movida por su curiosidad, \nlo sigue y cae por una \nmadriguera que la lleva a un \nmundo totalmente extraño, lleno \nde criaturas fantásticas y reglas \nilógicas.", posx, posy + 40);
-  fill(255); // restaurar a opaco para otros usos
+  text("La historia comienza cuando \nAlicia, ve pasar a un Conejo \nBlanco que parece tener mucha \nprisa. Movida por su curiosidad, \nlo sigue y cae por una \nmadriguera que la lleva a un \nmundo totalmente extraño, lleno \nde criaturas fantásticas y reglas \nilógicas.", 300, posy + 40);
 }
 
 void diapo3() {
   image(diapo3, 0, 0, 640, 480);
   image(prota, 60, 100, 160, 300);
-
-  posx = 290;
-  posy = 90;
-  
-  fill(#6FB7F0); rect(280, 55, 310, 330, 20);
+  if (posx < 280) posx += 5;
+  if (posy < 110) posy += 5;
+  fill(#6FB7F0);
+  rect(265, 70, 320, 340, 20);
   fill(255);
   textFont(fuenteTitulo);
   text("Personaje principal", posx, posy);
@@ -123,52 +129,25 @@ void diapo3() {
 
 void diapo4() {
   image(diapo4, 0, 0, 640, 480);
-  image(viaje,60, 110, 210, 280);
-  
+  image(viaje, 60, 110, 200, 280);
   posx = 300;
-  posy = 90;
-    
-  fill(#E5C09B); rect(290, 50, 300, 340, 20);
+  if (posyNeg > 110) posyNeg -= 5;
+  fill(#E5C09B);
+  rect(290, 65, 300, 350, 20);
   fill(255);
   textFont(fuenteTitulo);
-  text("El inicio del viaje", posx, posy);
+  text("El inicio del viaje", posx, posyNeg);
   textFont(fuenteTexto);
-  text("Al caer por la madriguera, Alicia \nentra a un mundo surrealista \ndonde nada es como parece. Allí \nse encuentra puertas mágicas, \npociones que cambian su tamaño \ny animales que hablan.\nComienza así un viaje en el que \nse mezcla el sueño con la\nrealidad.", posx, posy + 40);
+  text("Al caer por la madriguera, Alicia \nentra a un mundo surrealista \ndonde nada es como parece. Allí \nse encuentra puertas mágicas, \npociones que cambian su tamaño \ny animales que hablan.\nComienza así un viaje en el que \nse mezcla el sueño con la\nrealidad.", posx, posyNeg + 40);
 }
 
 void diapo5() {
   image(diapo5, 0, 0, 640, 480);
-
-  image(pers1, 60, 140, 120, 180);
-  image(pers2, 250, 140, 120, 180);
-  image(pers3, 430, 140, 120, 180);
-  
-  posx = 35;
-  posy = 70;
-  
-  fill(#6FB7F0); rect(20, 40, 590, 90, 20);
-  rect(35, 340, 180, 120, 20); //personaje 1
-  rect(250, 340, 180, 120, 20); //personaje 2
-  rect(430, 340, 180, 120, 20); //personaje 3
-  fill(255);
-  textFont(fuenteTitulo);  
-  text("Encuentros curiosos", posx, posy);
-  textFont(fuenteTexto, 19);
-  text("A lo largo de su aventura, Alicia conoce personajes muy peculiares los cuales son:", posx, posy + 40);
-  text("El Gato de Cheshire \nAparece y desaparece, \ndejando solo su sonrisa.", posx + 20, posy + 300);
-  text("La Oruga Azul \nHabla en acertijos.", posx + 220, posy + 300);
-  text("El Sombrerero Loco y la \nLiebre de Marzo \nSon compañeros de una \nmerienda interminable.", posx + 390, posy + 300);
-
-}
-
-void diapo6() {
-  image(diapo6, 0, 0, 640, 480);
-  image(fiesta, 120, 240, 400, 200); 
-   
-  posx = 60;
-  posy = 90;  
-    
-  fill(#6FB7F0); rect(40, 50, 560, 160, 20);
+  image(fiesta, 120, 240, 400, 200);
+  posx=60;
+  if (posy < 90) posy+=5;
+  fill(#4DBFBE);
+  rect(40, 50, 560, 160, 20);
   fill(255);
   textFont(fuenteTitulo);
   text("El té de locos", posx, posy);
@@ -176,46 +155,44 @@ void diapo6() {
   text("En una de las escenas más famosas, Alicia participa de una \nmerienda con el Sombrerero y la Liebre. La conversación no \ntiene sentido y el tiempo parece haberse detenido.", posx, posy + 40);
 }
 
-void diapo7() {
-  image(diapo7, 0, 0, 640, 480);
+void diapo6() {
+  image(diapo6, 0, 0, 640, 480);
   image(reina, 50, 100, 210, 280);
-  
-  posx = 300;
-  posy = 90;
-  
-  fill(#E5C09B); rect(290, 50, 310, 260, 20);
+  if (posx < 300) posx += 5;
+  posy = 140;
+  fill(#E57496);
+  rect(290, 100, 310, 260, 20);
   fill(255);
   textFont(fuenteTitulo);
   text("La Reina de Corazones", posx, posy);
   textFont(fuenteTexto);
-  text("Alicia llega al castillo de la \nReina de Corazones, una monarca \nautoritaria que ordena ejecuciones \npor capricho, diciendo:", posx, posy + 40);
-  text("¡Que le corten la cabeza!", posx, posy + 160);
+  text("Alicia llega al castillo de la \nReina de Corazones, una \nmonarca autoritaria que ordena \nejecuciones por capricho, \ndiciendo:", posx, posy + 40);
+  text("¡Que le corten la cabeza!", posx, posy + 190);
+}
+
+void diapo7() {
+  image(diapo7, 0, 0, 640, 480);
+  image(juicio, 50, 100, 210, 280);
+  if (posxNeg>300) posxNeg -= 5;
+  posy = 110;
+  fill(#F0DBA7);
+  rect(290, 75, 300, 330, 20);
+  fill(255);
+  textFont(fuenteTitulo);
+  text("El juicio absurdo", posxNeg, posy);
+  textFont(fuenteTexto);
+  text("Alicia asiste a un juicio absurdo \ndonde todo parece ridículo. Ella \nya no se deja llevar por la \nconfusión del lugar y defiende \nsu propio criterio. Este momento \nmarca un punto de madurez, \ndonde Alicia comienza a confiar \nen sí misma y en su \nrazonamiento.", posxNeg, posy + 40);
 }
 
 void diapo8() {
   image(diapo8, 0, 0, 640, 480);
-  image(juicio, 50, 100, 210, 280);
-
-  posx = 300;
-  posy = 90;
-  
-  fill(#C173E0); rect(290, 55, 310, 330, 20);
-  fill(255);
-  textFont(fuenteTitulo);
-  text("El juicio absurdo", posx, posy);
-  textFont(fuenteTexto);
-  text("Alicia asiste a un juicio absurdo \ndonde todo parece ridículo. Ella \nya no se deja llevar por la \nconfusión del lugar y defiende \nsu propio criterio. Este momento \nmarca un punto de madurez, donde \nAlicia comienza a confiar en sí \nmisma y en su razonamiento.", posx, posy + 40);
-}
-
-void diapo9() {
-  image(diapo9, 0, 0, 640, 480);
-  image(regreso, 60, 110, 210, 280);
-  
+  image(regreso, 60, 110, 200, 280);
   posx = 320;
-  posy = 90;
-  
-  fill(#C173E0); rect(300, 50, 290, 300, 20);
-  fill(255);
+  posy = 130;
+  if (fadeAlpha < 255) fadeAlpha += 5;
+  fill(#C173E0);
+  rect(305, 90, 280, 280, 20);
+  fill(255, fadeAlpha);
   textFont(fuenteTitulo);
   text("Regreso al mundo real", posx, posy);
   textFont(fuenteTexto);
@@ -228,9 +205,8 @@ void diapo9() {
   text("Reiniciar", 500, 425);
 }
 
-// Detecta clic en botón de reinicio
 void mousePressed() {
-  if (diapo == 9) {
+  if (diapo == 8) {
     if (mouseX > 500 && mouseX < 600 && mouseY > 400 && mouseY < 440) {
       reinicio = true;
     }
