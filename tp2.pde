@@ -1,6 +1,7 @@
 //Sofia Giordano
 //tp2 com5
 //Legajo 119042/3
+
 float posx = 0; 
 float posy = 0;
 float posyNeg= 180;
