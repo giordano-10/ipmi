@@ -1,14 +1,15 @@
 PImage img;
 float t = 0;
-float tamcelda = 75;
-float posX = 450;
-float posY = 50;
+int tamcelda = 75;
+int posX = 450;
+int posY = 50;
 boolean animar = false;
 
 void setup() {
   size(800, 400);
   img = loadImage("obra.jpg");
   noStroke();
+  rectMode(CENTER);
 }
 
 void draw() {
@@ -17,10 +18,10 @@ void draw() {
 
   for (int y = 0; y < 4; y++) {
     for (int x = 0; x < 4; x++) {
-      float cx = x * tamcelda + posX + tamcelda / 2;
-      float cy = y * tamcelda + posY + tamcelda / 2;
+      int cx = x * tamcelda + posX + tamcelda / 2;
+      int cy = y * tamcelda + posY + tamcelda / 2;
 
-      //colores similares a la obra
+      // colores similares a la obra
       int colorIndex = x + y;
       color fondo;
       if (colorIndex == 0)       fondo = #423CCB;
@@ -32,25 +33,26 @@ void draw() {
       else if (colorIndex == 6)  fondo = #F5FF82;
       else                       fondo = #FFFFFF;
 
-      // Solo aplicar interactividad si animar está activo
-      if (animar && mouseX > cx - tamcelda / 2 && mouseX < cx + tamcelda / 2 &&
-          mouseY > cy - tamcelda / 2 && mouseY < cy + tamcelda / 2) {
-        fondo = #ECD6FF;
+      // Tamaño animado del cuadrado
+      float phase = (x + y * 4) * 0.3;
+      float animatedSize;
+      if (animar) {
+        animatedSize = tamañoAnimado(t, phase, tamcelda);
+      } else {
+        animatedSize = tamcelda;
       }
 
-      // Tamaño animado del cuadrado (función que retorna)
-      float phase = (x + y * 4) * 0.3;
-      float animatedSize = animar ? tamañoAnimado(t, phase, tamcelda) : tamcelda;
-
-      // Dibujo del cuadrado (función que no retorna)
+      // Dibujo del cuadrado
       dibujarCelda(cx, cy, animatedSize, fondo);
 
-      // Círculo con interacción solo si animar está activo
-      float tam = tamcelda * 0.65;
+      // Círculo con o sin animación
+      float tam;
       if (animar) {
-        float d = dist(mouseX, mouseY, cx, cy);
-        tam = map(d, 0, 200, 5, tamcelda * 0.65);
+        float distancia = dist(mouseX, mouseY, cx, cy);
+        tam = map(distancia, 0, 200, 5, tamcelda * 0.65);
         tam = constrain(tam, 5, tamcelda * 0.65);
+      } else {
+        tam = tamcelda * 0.65;
       }
 
       fill(#CD6699);
@@ -59,14 +61,13 @@ void draw() {
   }
 
   if (animar) {
-    t += 0.05;
+    t += 0.1;
   }
 }
 
 // Función que NO retorna
 void dibujarCelda(float cx, float cy, float tam, color fondo) {
   fill(fondo);
-  rectMode(CENTER);
   rect(cx, cy, tam, tam);
 }
 
@@ -80,7 +81,7 @@ float tamañoAnimado(float tiempo, float fase, float base) {
 void keyPressed() {
   if (key == 'r' || key == 'R') {
     t = 0;
-    animar = false; // También desactiva la animación
+    animar = false;
   }
 }
 
