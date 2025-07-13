@@ -46,10 +46,10 @@ void dibujarGrilla() {  // cuadricula de 4x4
 
 void dibujarCelda(float centroX, float centroY, float tamaño, color fondo) { // *
   fill(fondo);
-  rect(centroX, centroY, tamaño, tamaño); // *
+  rect(centroX, centroY, tamaño, tamaño); 
 }
 
-void dibujarCirculo(float centroX, float centroY) {
+void dibujarCirculo(float centroX, float centroY) { // *
   float tamañoCirculo;
 
 // lo mismo que la animacion de los cuadrados 
