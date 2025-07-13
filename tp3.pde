@@ -1,3 +1,5 @@
+//le debo el video de nuevo 😢
+
 PImage img;
 int tamañoCelda = 75;
 int origenX = 450;
@@ -7,12 +9,12 @@ boolean estaAnimando = false;
 void setup() {
   size(800, 400);
   img = loadImage("obra.jpg");
-  noStroke();
+  noStroke(); //quito los bordes de las figuras
   rectMode(CENTER);
 }
 
 void draw() {
-  background(#2C2C2C); // color gris
+  background(#2C2C2C); // gris
   image(img, 0, 0, 400, 400);
   dibujarGrilla();
 }
@@ -21,34 +23,36 @@ void dibujarGrilla() {  // cuadricula de 4x4
   for (int fila = 0; fila < 4; fila++) {
     for (int columna = 0; columna < 4; columna++) {
 
+      //calculo la posicion central de cada celda
       int centroX = calcularCentroX(columna);
       int centroY = calcularCentroY(fila);
 
-      // Color de fondo según columna + fila
+      // Color según el valor de columna + fila
       color colorFondo = obtenerColorFondo(columna + fila);
 
       float tamañoActual;
       if (estaAnimando) {
-        float distancia = dist(mouseX, mouseY, centroX, centroY);
-        tamañoActual = map(distancia, 10, 200, tamañoCelda * 1.0, tamañoCelda * 0.8);
+        float distancia = dist(mouseX, mouseY, centroX, centroY); // calculo la distancia que hay entre el mouse y el centro de la celda
+        tamañoActual = map(distancia, 10, 200, tamañoCelda * 1, tamañoCelda * 0.8); // apartir de disc() cuando el mouse se acerque (10, tamañoCelda * 1) el cuadrado se agranda y cuando se aleje (200, tamañoCelda * 0.8) se achica el cuadrado  
       } else {
-        tamañoActual = tamañoCelda;
+        tamañoActual = tamañoCelda; // se mantiene sin alteraciones (animacion inactiva)
       }
 
-      dibujarCelda(centroX, centroY, tamañoActual, colorFondo);
-      dibujarCirculo(centroX, centroY);
+      dibujarCelda(centroX, centroY, tamañoActual, colorFondo); //dibuja los cuadrados con el color "correspodiente" *
+      dibujarCirculo(centroX, centroY); //dibuja los circulos por encima de los cuadrados // *
     }
   }
 }
 
-void dibujarCelda(float centroX, float centroY, float tamaño, color fondo) {
+void dibujarCelda(float centroX, float centroY, float tamaño, color fondo) { // *
   fill(fondo);
-  rect(centroX, centroY, tamaño, tamaño);
+  rect(centroX, centroY, tamaño, tamaño); // *
 }
 
 void dibujarCirculo(float centroX, float centroY) {
   float tamañoCirculo;
 
+// lo mismo que la animacion de los cuadrados 
   if (estaAnimando) {
     float distancia = dist(mouseX, mouseY, centroX, centroY);
     tamañoCirculo = map(distancia, 0, 200, 15, tamañoCelda * 0.45);
@@ -60,15 +64,15 @@ void dibujarCirculo(float centroX, float centroY) {
   ellipse(centroX, centroY, tamañoCirculo, tamañoCirculo);
 }
 
+// devuelven las coordenadas del centro de cada cuadrado
 int calcularCentroX(int columna) {
   return columna * tamañoCelda + origenX + tamañoCelda / 2;
 }
-
 int calcularCentroY(int fila) {
   return fila * tamañoCelda + origenY + tamañoCelda / 2;
 }
 
-color obtenerColorFondo(int indiceColor) {
+color obtenerColorFondo(int indiceColor) { // devuelve un color especifico dependiendo de que columna o fila sea (entre 0 y 6)
   if (indiceColor == 0) {
     return #3332B7;  // azul oscuro
   } else if (indiceColor == 1) {
@@ -86,12 +90,12 @@ color obtenerColorFondo(int indiceColor) {
   }
 }
 
-void keyPressed() {
+void keyPressed() { //reinicio con la tecla r
   if (key == 'r' || key == 'R') {
     estaAnimando = false;
   }
 }
 
-void mousePressed() {
+void mousePressed() { // 
   estaAnimando = true;
 }
