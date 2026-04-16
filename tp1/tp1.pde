@@ -72,10 +72,4 @@ void draw(){
   quad(492,312,508,305,492,400,480,400);//izq
   fill(#373737);
   quad(492,400,514,400,526,310,508,305);//der 
-  
-  
-  fill( #FFC93E );
-  textSize( 20 );
-  text( mouseX + 400 + " / " + mouseY, mouseX, mouseY );
-  //
 }
