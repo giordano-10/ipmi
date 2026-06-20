@@ -3,7 +3,8 @@ PImage obraOpArt;
 // Variables de trabajo
 int   cantidadLineas;      // cuántas diagonales se dibujan
 int   cantidadPelitos;     // cuántos "pelitos" hay sobre cada diagonal
-float anguloGlobal;        // inclinación extra que se suma a todos los pelitos
+float anguloGlobal;        // comportamientos que se suma a todos los pelitos
+// es el encargado del cambio de comportamiento de los pelitos
 
 // Valores originales
 int   LINEAS_ORIG  = 20;
