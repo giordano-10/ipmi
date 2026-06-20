@@ -46,7 +46,7 @@ float calcularSeparacion(int indice, int totalLineas) {
 }
 
 void dibujarPatron(int totalLineas) {
-  // El for externo recorre las líneas: para cada una calcula su posición con calcularSeparacion, define si es par o impar, y dibuja la diagonal como una línea gruesa.
+  // El for externo dubujo las líneas: para cada una calcula su posición con calcularSeparacion, define si es par o impar, y dibuja la diagonal como una línea gruesa.
   for (int i = 0; i < totalLineas; i++) {
     float xStart = calcularSeparacion(i, totalLineas);
     boolean pelitoPar = (i % 2 == 0);
@@ -59,7 +59,7 @@ void dibujarPatron(int totalLineas) {
     stroke(0);
     strokeWeight(3);
     line(x1, y1, x2, y2);
-    //el for interno recorre los pelitos de esa línea. Con lerp calculo los puntos a lo largo de la diagonal, conel parámetro t va de cero a uno y me da la posición de cada pelito entre el inicio y el fin.
+    //el for interno dibujo los pelitos de esa línea. Con lerp calculo los puntos a lo largo de la diagonal, conel parámetro t va de cero a uno y me da la posición de cada pelito entre el inicio y el fin.
     for (int j = 0; j <= cantidadPelitos; j++) {
       float t = map(j, 0, cantidadPelitos, 0, 1);
       float posicionX = lerp(x1, x2, t);
