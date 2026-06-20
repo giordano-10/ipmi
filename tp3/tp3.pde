@@ -30,11 +30,11 @@ void reiniciar() {
 void draw() {
   background(255);
   image(obraOpArt, 0, 0, 400, 400);
-  // funciona como una máscara: a partir de ahí, todo lo que dibuje queda recortado a la mitad derecha, así la trama no invade la imagen.
+  // funciona como una máscara: a partir de ahí, todo lo que dibuje queda recortado a la mitad derecha
   clip(400, 0, 400, height);
   dibujarPatron(cantidadLineas);
 
-  // sacar la máscara y poder dibujar la interfaz encima.
+  // saco la mnáscara para poder dibujar la interfaz encima.
   noClip();
   dibujarInterfaz();
 }
@@ -59,17 +59,17 @@ void dibujarPatron(int totalLineas) {
     stroke(0);
     strokeWeight(3);
     line(x1, y1, x2, y2);
-    //el for interno recorre los pelitos de esa línea. Con lerp calculo puntos a lo largo de la diagonalel parámetro t va de cero a uno y me da la posición de cada pelito entre el inicio y el fin.
+    //el for interno recorre los pelitos de esa línea. Con lerp calculo los puntos a lo largo de la diagonal, conel parámetro t va de cero a uno y me da la posición de cada pelito entre el inicio y el fin.
     for (int j = 0; j <= cantidadPelitos; j++) {
-      float t  = map(j, 0, cantidadPelitos, 0, 1);
-      float px = lerp(x1, x2, t);
-      float py = lerp(y1, y2, t);
+      float binario  = map(j, 0, cantidadPelitos, 0, 1);
+      float posicionX = lerp(x1, x2, binario);
+      float posicionY = lerp(y1, y2, binario);
       float angulo;
       //Para cada pelito calculo un ángulo, y hay dos modos.
 
       //Si el mouse está activo, uso atan2 con la diferencia entre la posición del mouse y la del pelito,y eso lo orienta hacia el cursor.
       if (mouseActivo) {
-        angulo = atan2(mouseY - py, mouseX - px) + anguloGlobal;
+        angulo = atan2(mouseY - posicionY, mouseX - posicionX) + anguloGlobal;
       } else {
         //Si no está activo, entra el modo patron: los pelitos de las líneas pares quedan horizontales
         if (pelitoPar) {
