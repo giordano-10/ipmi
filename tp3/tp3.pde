@@ -1,161 +1,126 @@
 PImage obraOpArt;
 
-int   cantidadLineas;   // cuántas diagonales
-int   cantidadPelitos;  // cuántos pelitos por diagonal
-float anguloGlobal;     // inclinación base de los pelitos (knob principal de la ilusión)
-boolean modoCaos;       // activa el jitter y los colores aleatorios con random()
+// Variables de trabajo
+int   cantidadLineas;      // cuántas diagonales se dibujan
+int   cantidadPelitos;     // cuántos "pelitos" hay sobre cada diagonal
+float anguloGlobal;        // inclinación extra que se suma a todos los pelitos
 
-// ---- Valores originales para poder reiniciar ----
-int   LINEAS_ORIG  = 20;  // más líneas para cubrir bien todo el lado derecho
+// --- Valores originales
+int   LINEAS_ORIG  = 20;
 int   PELITOS_ORIG = 24;
 float ANGULO_ORIG  = 0;
 
-// ---- Botón de reinicio (zona circular) ----
-float btnX = 765, btnY = 365, btnR = 18;
-float radioMouse = 120; // radio de distorsión alrededor del mouse
+boolean mouseActivo = false; 
 
 void setup() {
   size(800, 400);
   obraOpArt = loadImage("obraOpArt.jpg");
-  reiniciar(); // arrancamos siempre en el estado original
+  reiniciar();
 }
 
-// FUNCIÓN PARA REINICIAR: vuelve las variables a su estado original
+// Vuelve todas las variables a su estado inicial
 void reiniciar() {
   cantidadLineas  = LINEAS_ORIG;
   cantidadPelitos = PELITOS_ORIG;
   anguloGlobal    = ANGULO_ORIG;
-  modoCaos        = false;
+  mouseActivo     = false;
 }
 
 void draw() {
   background(255);
   image(obraOpArt, 0, 0, 400, 400);
-
-  // 2. LADO DERECHO: recreación interactiva
-  // RECORTAMOS el dibujo al bloque derecho (400..800) para que NADA invada la referencia
+  // funciona como una máscara: a partir de ahí, todo lo que dibuje queda recortado a la mitad derecha,
+  //así la trama no invade la imagen.
   clip(400, 0, 400, height);
-  for (int i = 0; i < cantidadLineas; i++) {     // FOR externo
-    float xInicio = calcularSeparacion(i, cantidadLineas);
-    boolean tipoPar = (i % 2 == 0); // alterna la orientación base
-    dibujarDiagonal(xInicio, tipoPar);
-  }
-  noClip(); // a partir de acá volvemos a dibujar sin recorte
-
+  dibujarPatron(cantidadLineas);
+  // sacar la máscara y poder dibujar la interfaz encima.
+  noClip();
   dibujarInterfaz();
 }
 
-// ===================================================
-// FUNCIÓN QUE RETORNA VALOR (float)
-// Calcula el espaciado de cada diagonal.
-// Arrancamos bien a la izquierda (-400) para que NO falten
-// líneas en el ángulo superior izquierdo del lado derecho.
-// ===================================================
+// Recibe el índice de una línea y el total, y con map reparte de
+// forma proporcional dónde arranca cada línea a lo ancho.
 float calcularSeparacion(int indice, int totalLineas) {
+  // es la función que retorna un valor, y ese valor se usa para posicionar las líneas."
   return map(indice, 0, totalLineas, -400, 480);
 }
 
-// ===================================================
-// FUNCIÓN QUE NO RETORNA VALOR (void)
-// Dibuja la diagonal y, con un FOR anidado, sus pelitos
-// ===================================================
-void dibujarDiagonal(float xStart, boolean pelitoPar) {
-  float x1 = xStart + 400;
-  float y1 = height + 50;
-  float x2 = xStart + 250 + 400;
-  float y2 = -50;
+void dibujarPatron(int totalLineas) {
+  // El for externo recorre las líneas: para cada una calcula su posición con calcularSeparacion,
+  // define si es par o impar, y dibuja la diagonal como una línea gruesa.
+  for (int i = 0; i < totalLineas; i++) {
+    float xStart = calcularSeparacion(i, totalLineas);
+    boolean pelitoPar = (i % 2 == 0);
 
-  // Línea diagonal principal (color random si está el modo caos)
-  if (modoCaos) {
-    stroke(random(255), random(255), random(255));
-  } else {
+    float x1 = xStart + 400;
+    float y1 = height + 50;
+    float x2 = xStart + 250 + 400;
+    float y2 = -50;
+
     stroke(0);
-  }
-  strokeWeight(4);
-  line(x1, y1, x2, y2);
+    strokeWeight(3);
+    line(x1, y1, x2, y2);
+    //el for interno recorre los pelitos de esa línea. Con lerp calculo puntos a lo largo de la diagonal
+    //el parámetro t va de cero a uno y me da la posición de cada pelito entre el inicio y el fin.
+    for (int j = 0; j <= cantidadPelitos; j++) {
+      float t  = map(j, 0, cantidadPelitos, 0, 1);
+      float px = lerp(x1, x2, t);
+      float py = lerp(y1, y2, t);
+      float angulo;
+      //Para cada pelito calculo un ángulo, y hay dos modos.
 
-  // FOR ANIDADO: recorremos la diagonal dibujando pelitos
-  strokeWeight(3);
-  for (int j = 0; j <= cantidadPelitos; j++) {
-    float t  = map(j, 0, cantidadPelitos, 0, 1);
-    float px = lerp(x1, x2, t);
-    float py = lerp(y1, y2, t);
+      //Si el mouse está activo, uso atan2 con la diferencia entre la posición del mouse y la del pelito,
+      //y eso lo orienta hacia el cursor.
+      if (mouseActivo) {
+        angulo = atan2(mouseY - py, mouseX - px) + anguloGlobal;
+      } else {
+        //Si no está activo, entra el modo patron: los pelitos de las líneas pares quedan horizontales
+        if (pelitoPar) {
+          angulo = 0;
+        } else {
+          // y los de las impares verticales, y esa alternancia es la que genera el efecto óptico.
+          angulo = HALF_PI;
+        }
+        // En los dos casos sumo anguloGlobal, la inclinación general que controlo con el teclado.
+        angulo += anguloGlobal;
+      }
 
-    // --- DISTORSIÓN LOCAL con dist(): los pelitos cerca del mouse giran más ---
-    float d = dist(px, py, mouseX, mouseY);
-    float distorsion = 0;
-    if (d < radioMouse) {
-      distorsion = map(d, 0, radioMouse, radians(45), 0);
-    }
-
-    // --- Orientación base (if/else): pares horizontales, impares verticales ---
-    float anguloBase;
-    if (pelitoPar) {
-      anguloBase = 0;        // horizontal
-    } else {
-      anguloBase = HALF_PI;  // vertical
-    }
-
-    // Ángulo final = base + inclinación del usuario + distorsión del mouse
-    float angulo = anguloBase + anguloGlobal + distorsion;
-
-    // --- modo caos: color aleatorio + temblor aleatorio con random() ---
-    if (modoCaos) {
-      stroke(random(255), random(255), random(255));
-      angulo += random(-2, 4);
-    } else {
+      // Con el ángulo ya listo, uso translate para llevar el origen de coordenadas al pelito,
+      // rotate para girarlo, y dibujo un segmento corto centrado en cero.
+      // pushMatrix y popMatrix aíslan esa transformación para que no arrastre a los pelitos siguientes.
       stroke(0);
+      pushMatrix();
+      translate(px, py);
+      rotate(angulo);
+      line(-14, 0, 14, 0);
+      popMatrix();
     }
-
-    // ROTATE + TRANSLATE
-    pushMatrix();
-    translate(px, py);   // nos paramos sobre la diagonal
-    rotate(angulo);      // inclinamos el pelito
-    line(-14, 0, 14, 0);
-    popMatrix();
   }
 }
 
-// Dibuja el texto de ayuda y el botón de reinicio
+// creo un recuadro blanco y escribe las instrucciones encima
 void dibujarInterfaz() {
-  // Franja blanca arriba para que el texto se lea bien (no se pisa con el dibujo)
   noStroke();
   fill(255);
   rect(400, 0, 400, 16);
-
-  // Texto de instrucciones (ya sin las flechas)
   fill(0);
   textAlign(LEFT, CENTER);
   textSize(14);
-  text("Mouse: distorsiona  |  Z/Y: inclina  |  C: caos  |  R o boton: reiniciar", 408, 8);
-
-  // Botón circular de reset (zona de colisión)
-  fill(230);
-  stroke(0);
-  strokeWeight(1.5);
-  ellipse(btnX, btnY, btnR * 2, btnR * 2);
-  fill(0);
-  noStroke();
-  textAlign(CENTER, CENTER);
-  textSize(11);
-  text("R", btnX, btnY - 1);
+  text("Click: activa mouse  |  Z/Y: inclina  |  R: reiniciar", 410, 8);
 }
 
-// ===================================================
-// EVENTOS DE TECLADO: modifican variables (sin flechas)
-// ===================================================
-void keyPressed() {
-  if (key == 'y' || key == 'Y') anguloGlobal += radians(5);
-  if (key == 'z' || key == 'Z') anguloGlobal -= radians(5);
-  if (key == 'c' || key == 'C') modoCaos = !modoCaos;
-  if (key == 'r' || key == 'R') reiniciar();
-}
+// y por parte de las interacciones. mousePressed: si el clickeo, invierto mouseActivo,
+// prendiendo o apagando el seguimiento del mouse.
 
-// ===================================================
-// EVENTO DE MOUSE: colisión circular con el botón de reset
-// ===================================================
+// keyPressed: Z e Y cambian anguloGlobal de a cinco grados para inclinar toda la trama,
+// y R llama a reiniciar, que devuelve las variables a sus valores originales."
 void mousePressed() {
-  if (dist(mouseX, mouseY, btnX, btnY) < btnR) {
-    reiniciar();
-  }
+  if (mouseX > 400) mouseActivo =! mouseActivo;
+}
+
+void keyPressed() {
+  // radians(5) convierte 5 grados a radianes (la unidad que usa rotate)
+  if (key == 'y' || key == 'Y') anguloGlobal += radians(5);   // gira hacia la derecha
+  if (key == 'z' || key == 'Z') anguloGlobal -= radians(5);   // gira hacia la izquierda
+  if (key == 'r' || key == 'R') reiniciar();                  // vuelve a empezar
 }
