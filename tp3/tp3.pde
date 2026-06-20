@@ -61,9 +61,9 @@ void dibujarPatron(int totalLineas) {
     line(x1, y1, x2, y2);
     //el for interno recorre los pelitos de esa línea. Con lerp calculo los puntos a lo largo de la diagonal, conel parámetro t va de cero a uno y me da la posición de cada pelito entre el inicio y el fin.
     for (int j = 0; j <= cantidadPelitos; j++) {
-      float binario  = map(j, 0, cantidadPelitos, 0, 1);
-      float posicionX = lerp(x1, x2, binario);
-      float posicionY = lerp(y1, y2, binario);
+      float t = map(j, 0, cantidadPelitos, 0, 1);
+      float posicionX = lerp(x1, x2, t);
+      float posicionY = lerp(y1, y2, t);
       float angulo;
       //Para cada pelito calculo un ángulo, y hay dos modos.
 
