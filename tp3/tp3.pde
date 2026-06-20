@@ -34,7 +34,7 @@ void draw() {
   clip(400, 0, 400, height);
   dibujarPatron(cantidadLineas);
 
-  // saco la mnáscara para poder dibujar la interfaz encima.
+  // saco la máscara para poder dibujar la interfaz encima.
   noClip();
   dibujarInterfaz();
 }
