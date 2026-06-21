@@ -33,7 +33,7 @@ void draw() {
   image(obraOpArt, 0, 0, 400, 400);
   clip(400, 0, 400, height); // funciona como una máscara, limitando todo lo que dibuje a la mitad derecha
   dibujarPatron(cantidadLineas);
-  noClip(); //saco la máscara para poder dibujar la interfaz encima
+  noClip(); // saco la máscara para poder dibujar la interfaz encima
   dibujarInterfaz();
 }
 
@@ -62,7 +62,7 @@ void dibujarPatron(int totalLineas) {
       float angulo;
      
       if (mouseActivo) {
-        angulo = atan2(mouseY - py, mouseX - px) + anguloGlobal; //explicar atan2
+        angulo = atan2(mouseY - py, mouseX - px) + anguloGlobal; // explicar atan2
       } else {
         if (pelitoPar) { 
           angulo = 0;        // líneas pares horizontales
