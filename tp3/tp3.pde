@@ -1,4 +1,4 @@
-// Link de video: 
+// Link de video: tuve problemas por parte del audio, entregaré el vídeo en instancia de recuperatorio
 
 PImage obraOpArt;
 
@@ -31,9 +31,9 @@ void reiniciar() {
 void draw() {
   background(255);
   image(obraOpArt, 0, 0, 400, 400);
-  clip(400, 0, 400, height);
+  clip(400, 0, 400, height); // funciona como una máscara, limitando todo lo que dibuje a la mitad derecha
   dibujarPatron(cantidadLineas);
-  noClip();
+  noClip(); //saco la máscara para poder dibujar la interfaz encima
   dibujarInterfaz();
 }
 
@@ -57,12 +57,12 @@ void dibujarPatron(int totalLineas) {
     
     for (int j = 0; j <= cantidadPelitos; j++) {
       float t  = map(j, 0, cantidadPelitos, 0, 1);
-      float px = lerp(x1, x2, t);
+      float px = lerp(x1, x2, t); // Con lerp calculo los puntos a lo largo de la diagonal
       float py = lerp(y1, y2, t);
       float angulo;
      
       if (mouseActivo) {
-        angulo = atan2(mouseY - py, mouseX - px) + anguloGlobal; 
+        angulo = atan2(mouseY - py, mouseX - px) + anguloGlobal; //explicar atan2
       } else {
         if (pelitoPar) { 
           angulo = 0;        // líneas pares horizontales
