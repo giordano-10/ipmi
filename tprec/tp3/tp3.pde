@@ -1,15 +1,14 @@
-PImage obraOpArt;
+//link de video: https://youtu.be/jlOlVJ2UcUg
+//espero que no sea un problema que haya ido cortando el video para realizarlo  
 
-// variables de trabajo
+PImage obraOpArt;
 int   cantidadLineas;    // cuántas diagonales se dibujan
 int   cantidadPelitos;   // cuántos "pelitos" hay sobre cada diagonal
 float anguloGlobal;      // cambio de comportamiento de los pelitos
 
-// valores originales
-int   LINEAS_ORIG  = 20;
+int   LINEAS_ORIG  = 14;
 int   PELITOS_ORIG = 24;
 float ANGULO_ORIG  = 0;
-
 boolean mouseActivo = false;
 
 void setup() {
@@ -35,17 +34,17 @@ void draw() {
 }
 
 float calcularSeparacion(int indice, int totalLineas) {
-  return map(indice, 0, totalLineas, -400, 480);
+  return map(indice, 0, totalLineas, -200, 400);
 }
 
 void dibujarPatron(int totalLineas) {
   for (int i = 0; i < totalLineas; i++) {
-    float diagonal  = calcularSeparacion(i, totalLineas);
+    float diagonal = calcularSeparacion(i, totalLineas);
     boolean pelitoPar = (i % 2 == 0);
 
     float x1 = diagonal + 400;
     float y1 = height + 50;
-    float x2 = diagonal + 250 + 400;
+    float x2 = diagonal + 280 + 400;
     float y2 = -50;
 
     stroke(0);
@@ -53,7 +52,7 @@ void dibujarPatron(int totalLineas) {
     line(x1, y1, x2, y2);
 
     for (int j = 0; j <= cantidadPelitos; j++) {
-      float t  = map(j, 0, cantidadPelitos, 0, 1);
+      float t = map(j, 0, cantidadPelitos, 0, 1);
       float posX = lerp(x1, x2, t);
       float posY = lerp(y1, y2, t);
       float angulo;
@@ -68,7 +67,7 @@ void dibujarPatron(int totalLineas) {
         }
         angulo += anguloGlobal;
       }
-
+      
       pushMatrix();
       translate(posX, posY);
       rotate(angulo);
@@ -94,7 +93,6 @@ void mousePressed() {
 }
 
 void keyPressed() {
-  // radians(5) convierte 5 grados a radianes (la unidad que usa rotate)
   if (key == 'y' || key == 'Y') anguloGlobal += radians(5);   // gira hacia la derecha
   if (key == 'z' || key == 'Z') anguloGlobal -= radians(5);   // gira hacia la izquierda
   if (key == 'r' || key == 'R') reiniciar();                  // vuelve a empezar
